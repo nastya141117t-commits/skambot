@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Blox Strike · Рулетка</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=Russo+One&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b111a;--steel:#16202e;--rim:#2b3b52;--ink:#e9eff8;--mute:#8a9bb2;--acc:#2fd4b4;
+--blue:#3f8cff;--purple:#a45cff;--pink:#ff5fc1;--red:#ff4b4b;--gold:#ffc83d}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--ink);font:500 15px/1.4 Manrope,system-ui,sans-serif;overflow:hidden}
+body{display:flex;flex-direction:column;padding:max(14px,env(safe-area-inset-top)) 0 max(16px,env(safe-area-inset-bottom));
+background:radial-gradient(120% 60% at 50% 38%,#16243a 0%,var(--bg) 70%)}
+h1{font:400 26px/1.1 "Russo One",sans-serif;text-align:center;letter-spacing:.5px}
+.sub{text-align:center;color:var(--mute);margin-top:4px;padding:0 20px}
+.stage{margin-top:6vh;position:relative}
+.wrap{position:relative;overflow:hidden;height:176px;border-block:2px solid var(--rim);background:#0a0f17;
+box-shadow:inset 0 0 40px #000,0 0 60px #2fd4b411}
+.wrap::before,.wrap::after{content:"";position:absolute;top:0;bottom:0;width:22%;z-index:3;pointer-events:none}
+.wrap::before{left:0;background:linear-gradient(90deg,#0a0f17,transparent)}
+.wrap::after{right:0;background:linear-gradient(270deg,#0a0f17,transparent)}
+.track{display:flex;gap:8px;padding:12px 0;will-change:transform}
+.c{flex:0 0 132px;height:152px;border-radius:10px;position:relative;overflow:hidden;display:flex;flex-direction:column;
+align-items:center;justify-content:flex-end;padding:0 6px 10px;background:linear-gradient(180deg,#1b2738,#101826);
+border:1px solid var(--rim);--k:var(--blue)}
+.c.purple{--k:var(--purple)}.c.pink{--k:var(--pink)}.c.red{--k:var(--red)}.c.gold{--k:var(--gold)}
+.c::before{content:"";position:absolute;inset:auto 0 0;height:75%;background:radial-gradient(80% 90% at 50% 100%,color-mix(in srgb,var(--k) 55%,transparent),transparent)}
+.c::after{content:"";position:absolute;inset:auto 0 0;height:3px;background:var(--k);box-shadow:0 0 14px var(--k)}
+.c img,.c svg{width:116px;height:62px;object-fit:contain;margin-bottom:8px;fill:var(--k);filter:drop-shadow(0 4px 6px #000a);position:relative;z-index:1}
+.c b{font:700 13px/1.15 Manrope;text-align:center;position:relative;z-index:1}
+.c i{font:500 11px Manrope;color:var(--mute);font-style:normal;position:relative;z-index:1}
+.c.win{outline:2px solid var(--k);box-shadow:0 0 28px var(--k)}
+.mark{position:absolute;left:50%;top:-8px;bottom:-8px;width:3px;margin-left:-1.5px;z-index:4;background:#fff;
+box-shadow:0 0 12px #fff,0 0 28px var(--acc);border-radius:2px}
+.mark::before,.mark::after{content:"";position:absolute;left:-7px;border:8px solid transparent}
+.mark::before{top:0;border-top-color:#fff}.mark::after{bottom:0;border-bottom-color:#fff}
+.dock{margin-top:auto;padding:0 18px;display:grid;gap:10px}
+button{font:400 18px "Russo One",sans-serif;border:0;border-radius:14px;padding:17px;color:#04201a;background:var(--acc);
+box-shadow:0 6px 0 #14806c,0 12px 28px #2fd4b433;transition:transform .08s,box-shadow .08s}
+button:active{transform:translateY(4px);box-shadow:0 2px 0 #14806c}
+button:disabled{background:#26344a;color:var(--mute);box-shadow:0 6px 0 #1a2638}
+button.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--rim);font-size:15px;padding:13px}
+.odds{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;padding:0 14px;margin-top:16px;color:var(--mute);font-size:12px}
+.odds span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;background:var(--k)}
+.res{position:fixed;inset:0;z-index:9;display:none;align-items:flex-end;background:#000b}
+.res.on{display:flex}
+.sheet{width:100%;background:var(--steel);border-radius:22px 22px 0 0;padding:26px 20px max(20px,env(safe-area-inset-bottom));
+text-align:center;border-top:3px solid var(--k);animation:up .35s cubic-bezier(.2,.9,.3,1)}
+@keyframes up{from{transform:translateY(60%);opacity:0}}
+.sheet img,.sheet svg{width:230px;height:120px;object-fit:contain;fill:var(--k);filter:drop-shadow(0 0 22px var(--k))}
+.sheet h2{font:400 24px "Russo One";margin-top:6px}
+.sheet p{color:var(--mute);margin:6px 0 16px}
+.code{display:inline-block;font:700 18px ui-monospace,monospace;letter-spacing:2px;padding:8px 14px;border-radius:8px;background:#0b111a;border:1px dashed var(--rim);margin-bottom:16px}
+@media(prefers-reduced-motion:reduce){.sheet{animation:none}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><symbol id="g" viewBox="0 0 120 60">
+<path d="M4 20h22l4-6h58l4 6h22v12h-20l-6 4H70l-4 20H52l3-20H40l-4 8H26l2-8H4z"/></symbol></svg>
+
+<h1>BLOX STRIKE</h1>
+<div class="sub" id="sub">Одна крутка в сутки. Скин выдаётся в лобби.</div>
+
+<div class="stage"><div class="wrap" id="wrap"><div class="track" id="track"></div></div><div class="mark"></div></div>
+<div class="odds" id="odds"></div>
+
+<div class="dock">
+  <button id="go" disabled>Загрузка…</button>
+  <button class="ghost" id="last" hidden>Мой последний приз</button>
+</div>
+
+<div class="res" id="res"><div class="sheet" id="sheet">
+  <img id="ri" alt=""><h2 id="rn"></h2><p id="rr"></p>
+  <div class="code" id="rc"></div>
+  <button id="claim">Забрать в лобби</button>
+</div></div>
+
+<script>
+const tg=Telegram.WebApp;tg.ready();tg.expand();tg.disableVerticalSwipes?.();
+tg.setHeaderColor?.('#0b111a');tg.setBackgroundColor?.('#0b111a');
+const $=s=>document.querySelector(s),RN={blue:'Синий',purple:'Фиолетовый',pink:'Розовый',red:'Красный',gold:'Запретный'};
+const W=132,G=8,STEP=W+G,WIN=52,N=62,track=$('#track'),wrap=$('#wrap'),go=$('#go');
+let SK=[],busy=false,lastRes=null,timer=null;
+
+const api=(p,m='POST')=>fetch(p,{method:m,headers:{'X-Init-Data':tg.initData}}).then(r=>r.json());
+const pick=()=>{let t=SK.reduce((a,s)=>a+s.w,0),x=Math.random()*t;for(const s of SK){if((x-=s.w)<0)return s}return SK[0]};
+const FB='<svg><use href="#g"/></svg>';
+const card=(s,w)=>{const[a,b]=s.name.split(' | ');return `<div class="c ${s.r}${w?' win':''}"><img src="${s.img}" alt="" loading="eager" onerror="this.outerHTML=FB"><b>${b}</b><i>${a}</i></div>`};
+const build=win=>{track.innerHTML=Array.from({length:N},(_,i)=>card(i===WIN&&win?win:pick(),0)).join('');track.style.filter='';};
+const fmt=s=>`${Math.floor(s/3600)} ч ${Math.floor(s%3600/60)} мин`;
+
+let ac;function tick(){
+  try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();
+  o.type='square';o.frequency.value=900+Math.random()*120;g.gain.setValueAtTime(.05,ac.currentTime);
+  g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+.04);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.045)}catch(e){}
+  tg.HapticFeedback?.selectionChanged()}
+
+function animate(win){return new Promise(done=>{
+  build(win);const vw=wrap.clientWidth,jitter=(Math.random()-.5)*W*.7;
+  const target=WIN*STEP+W/2+jitter-vw/2,D=7200,t0=performance.now();let last=-1;
+  const f=t=>{const p=Math.min((t-t0)/D,1),e=1-Math.pow(1-p,4.6),x=target*e;
+    track.style.transform=`translate3d(${-x}px,0,0)`;
+    track.style.filter=`blur(${((1-p)**4*2.2).toFixed(2)}px)`;
+    const i=Math.floor((x+vw/2)/STEP);if(i!==last){last=i;tick()}
+    p<1?requestAnimationFrame(f):done()};
+  requestAnimationFrame(f)})}
+
+function lock(left){clearInterval(timer);if(left<=0){go.disabled=false;go.textContent='Крутить';return}
+  go.disabled=true;const end=Date.now()+left*1000;
+  const u=()=>{const l=Math.max(0,Math.round((end-Date.now())/1000));
+    if(!l){lock(0);return}go.textContent='Следующая через '+fmt(l)};u();timer=setInterval(u,30000)}
+
+function show(r){lastRes=r;const s=r.skin,sh=$('#sheet');sh.style.setProperty('--k',`var(--${s.r})`);
+  $('#ri').src=s.img;$('#ri').onerror=e=>e.target.style.visibility='hidden';$('#rn').textContent=s.name;$('#rr').textContent=RN[s.r]+' скин';$('#rc').textContent=r.code;
+  $('#claim').onclick=()=>tg.openLink(r.link);$('#res').classList.add('on');$('#last').hidden=false;
+  tg.HapticFeedback?.notificationOccurred('success')}
+$('#res').onclick=e=>{if(e.target.id==='res')e.currentTarget.classList.remove('on')};
+$('#last').onclick=()=>lastRes&&show(lastRes);
+
+go.onclick=async()=>{if(busy)return;busy=true;go.disabled=true;go.textContent='Крутим…';
+  const r=await api('/api/spin');
+  if(!r.ok){busy=false;if(r.left!=null){lock(r.left)}else{go.textContent='Ошибка, открой через бота'}return}
+  await animate(r.skin);track.children[WIN].classList.add('win');
+  setTimeout(()=>show(r),700);lock(86400);busy=false};
+
+(async()=>{
+  SK=await fetch('/api/skins').then(r=>r.json());SK.forEach(s=>{new Image().src=s.img});
+  $('#odds').innerHTML=['blue','purple','pink','red','gold'].map(k=>`<span style="--k:var(--${k})">${RN[k]}</span>`).join('');
+  build();const st=await api('/api/state');
+  st.ok?lock(st.left):(go.textContent='Открой через бота');
+})();
+</script></body></html>
