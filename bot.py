@@ -13,7 +13,7 @@ from aiogram.types import (CallbackQuery, InlineKeyboardButton, InlineKeyboardMa
                            Message, WebAppInfo)
 
 TOKEN = "9154759609:AAEe2ofVRtTY156_Y5JEYqSnABDSoVioDYQ"
-WEBAPP_URL = "https://google.com"
+WEBAPP_URL = "https://blox-roulette.onrender.com"
 LOBBY_URL = "https://roblox.com.bz/games/114234929420007/ZOMBIES-BloxStrike?privateServerLinkCode=06950255702508369675809703950614"
 COOLDOWN = int(os.getenv("COOLDOWN", 24 * 3600))   # 1 прокрутка в сутки
 PORT = int(os.getenv("PORT", 8080))
